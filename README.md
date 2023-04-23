@@ -33,6 +33,6 @@ Open your web browser and navigate to http://localhost:8080
 Contributing
 Contributions to this project are welcome. If you find any issues or want to suggest any improvements, feel free to create a pull request or open an issue.
 
-License
+### License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
