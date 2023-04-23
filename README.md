@@ -1,4 +1,4 @@
-Super Budget - Budget Management System
+# Super Budget - Budget Management System
 This project is a simple web-based Budget Management System built using Java Spring Boot Framework, Bootstrap, and Freemarker frameworks. It is the final project for one of my college classes.
 
 Objective
