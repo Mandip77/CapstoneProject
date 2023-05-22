@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org ">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Super Budget Management</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <h1>Super Budget</h1>
+
+    <div class="row">
+        <!-- Add new transactions -->
+        <div class="col-md-6">
+            <h3>Add New Transaction</h3>
+            <form th:action="@{/add-transaction}" th:object="${transaction}" method="post">
+                <div class="form-group">
+                    <label for="categoryId">Category:</label>
+                    <select class="form-control" id="categoryId" name="categoryId" th:required="required">
+                        <option th:each="category : ${budgetCategories}" th:value="${category.id}"
+                                th:text="${category.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <input type="text" class="form-control" id="description" name="description"
+                           th:field="*{description}" th:required="required" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" step="0.01" class="form-control" id="amount" name="amount"
+                           th:field="*{amount}" th:required="required" autocomplete="off" />
+                </div>
+                <input type="hidden" th:field="*{id}" />
+
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+
+        <!-- Add or update budget categories -->
+        <div class="col-md-6">
+            <h3>Add or Update Budget Categories</h3>
+            <form th:action="@{/add-category}" th:object="${budgetCategory}" method="post">
+                <input type="hidden" name="budgetCategoryId" th:value="${budgetCategory.id}" />
+
+                <div class="form-group">
+                    <label for="name">Category Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" th:field="*{name}"
+                           th:required="required" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="allocation">Allocation:</label>
+                    <input type="number" step="0.01" class="form-control" id="allocation" name="allocation"
+                           th:field="*{allocation}" th:required="required" autocomplete="off" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- View current monthly budget -->
+        <div class="col-md-6">
+            <h3>Current Monthly Budget</h3>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Allocation</th>
+                    <th>Balance</th>
+                    <th>Activity</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${budgetCategories}">
+                    <td th:text="${category.name}"></td>
+                    <td th:text="${category.allocation}"></td>
+                    <td th:text="${category.balance}"
+                        th:class="${category.balance < 0} ? 'text-danger' : ''"></td>
+                    <td>
+                                <span th:text="${category.allocation - category.balance}"
+                                      th:class="${category.allocation - category.balance < 0} ? 'text-danger' : ''"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{/delete-category/{id}(id=${category.id})}"
+                           class="btn btn-danger btn-sm" role="button">Delete</a>
+                        <button class="btn btn-warning btn-sm edit-category" data-id="${category.id}"
+                                data-name="${category.name}" data-allocation="${category.allocation}">Edit
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- View recent transactions -->
+        <div class="col-md-6">
+            <h3>Recent Transactions</h3>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="transaction : ${transactions}">
+                    <td th:text="${transaction.description}"></td>
+                    <td th:text="${transaction.amount}"></td>
+                    <td
+                            th:text="${transaction.budgetCategory != null ? transaction.budgetCategory.name : ''}"></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm edit-transaction"
+                                data-id="${transaction.id}" data-categoryid="${transaction.budgetCategory.id}"
+                                data-description="${transaction.description}"
+                                data-amount="${transaction.amount}">Edit
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+        $(".edit-transaction").click(function () {
+            var id = $(this).data("id"); // Get the transaction ID
+            var categoryId = $(this).data("categoryid");
+            var description = $(this).data("description");
+            var amount = $(this).data("amount");
+
+            // Set the form fields
+            $("input[name='id']").val(id);
+            $("#categoryId").val(categoryId);
+            $("#description").val(description);
+            $("#amount").val(amount);
+        });
+    </script>
+</body>
+
+</html>
+
