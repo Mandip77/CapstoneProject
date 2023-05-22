@@ -1,0 +1,14 @@
+CREATE TABLE budget_category (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    allocation DECIMAL(10, 2) NOT NULL,
+    balance DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE transaction (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    description VARCHAR(255) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    budget_category_id BIGINT NOT NULL,
+    FOREIGN KEY (budget_category_id) REFERENCES budget_category(id)
+);
